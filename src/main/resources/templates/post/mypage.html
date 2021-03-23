@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta id="_csrf" name="_csrf" th:content="${_csrf.token}"/>
+  <meta id="_csrf_header" name="_csrf_header" th:content="${_csrf.headerName}"/>
+  <title>Instagram</title>
+  <link th:href="@{https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css}"
+        rel="stylesheet">
+  <link rel="shortcut icon" th:href="@{/images/favicon.ico}">
+  <link rel="stylesheet" th:href="@{/css/styles.css}">
+  <link rel="stylesheet" th:href="@{/css/bootstrap.css}" />
+  <link rel="stylesheet" th:href="@{/css/mypage.css}">
+  <link rel="stylesheet" th:href="@{/css/placeholder.css}">
+  <link rel="stylesheet" th:href="@{/css/search.css}">
+  <link rel="stylesheet" th:href="@{/css/dialog.css}">
+  <style>
+    .col-xs-4.insList {
+      margin-bottom: 50px;
+    }
+  </style>
+</head>
+<body class="body">
+  <div th:replace="include/nav :: nav"></div>
+
+  <div class="container text-center">
+    <div class="row">
+      <div class="col-xs-3 col-xs-offset-1">
+        <div id="profileImgs" class="text-left">
+          <button class="profileImg_btn">
+            <img th:if="${user?.profileImage == null}" class="profileImg" alt=""
+                 src="https://scontent.cdninstagram.com/v/t51.2885-19/44884218_345707102882519_2446069589734326272_n.jpg?_nc_ht=scontent.cdninstagram.com&_nc_ohc=8AUoZNYMP5IAX_1X7X3&oh=965c84d6ff2bc182580e05cf45911085&oe=605FE68F&ig_cache_key=YW5vbnltb3VzX3Byb2ZpbGVfcGlj.2">
+            <img th:unless="${user?.profileImage == null}" class="profileImg"
+                 th:src="@{/upload} + ${user?.profileImage}">
+          </button>
+        </div>
+      </div>
+
+      <div class="col-xs-7 profile text-left" style="border-bottom: 0;">
+        <h1 class="profile_name" th:text="${user?.nickname}" style="font-weight:lighter; display: inline-block; ">nickname</h1>
+        <a th:if="${user.id} == ${checkUserId}" th:href="@{/user/profile}" class="btn btn-default btn-xs" style="display: inline-block; margin-left: 20px; font-weight: bold; padding-left: 30px; padding-right: 30px; font-size: 15px; margin-top: -12px; ">프로필편집</a>
+        <a th:if="${user.id} == ${checkUserId}" th:href="@{/post/upload}" class="btn btn-primary btn-xs" style="display: inline-block; margin-left: 10px; font-weight: bold; padding-left: 30px; padding-right: 30px; font-size: 15px; margin-top: -12px; ">업로드</a>
+        <button th:unless="${user.id} == ${checkUserId}" th:onclick="|javascript:follow('${user.id}')|" th:text="${followState} == 'true' ? '팔로우 취소' : '팔로우'" class="btn btn-primary btn-xs follow_btn" style="display: inline-block; margin-left: 20px; font-weight: bold; padding-left: 30px; padding-right: 30px; font-size: 15px; margin-top: -12px; ">업로드</button>
+        <br />
+        <div id="profileInfo">
+          <div style="font-size: 17px; display: inline-block; margin-top: 15px">게시물 <span th:text="${postCount}==null ? 0 : ${postCount}"></span></div>
+          <a id="three" th:onclick="|javascript:openDialog('${user.id}', '0')|" style="color: black; cursor: pointer; text-decoration: none;">팔로워 <span th:text="${followerCount}==null ? 0 : ${followerCount}"></span></a>
+          <a id="three" th:onclick="|javascript:openDialog('${user.id}', '1')|" style="color: black; cursor: pointer; text-decoration: none;">팔로우 <span th:text="${followCount}==null ? 0 : ${followCount}"></span></a>
+        </div>
+        <br />
+        <div th:text="${user?.name}" style="font-size: 18px; font-weight: bold;">name </div>
+        <div th:text="${user?.introduce}" style="font-size: 18px;">introduce </div>
+      </div>
+
+    </div><!-- row-->
+
+    <!--  팔로우 dialog  -->
+    <div class="dialog">
+      <div class="dialog_follow">
+          <div class="name_space"></div>
+          <div class="dialog_name">팔로워</div>
+          <div class="close_btn_body name_space">
+              <a class="close_btn" href="javascript:closeDialog();">
+                  <i class="fa fa-times" aria-hidden="true"></i>
+              </a>
+          </div>
+      </div>
+      <div class="dialog_main_body">
+
+      </div>
+    </div>
+    <!--  팔로우 dialog  -->
+
+      <div class="row" id="profileInfo_3" style="margin-top: 50px;">
+      <div class="col-xs-12" style="border-top: 1px solid #efefef">
+        <div class="col-xs-4" style="height: 52px;">
+        </div>
+        <div class="col-xs-1 text-center" id="post" style="border-top: 1px solid #000; cursor: pointer; padding: 0px;">
+          <div class="active postFont" style="margin-top: 15px; font-size: 12px;">게시물</div>
+        </div>
+        <div class="col-xs-1"> </div>
+        <div th:if="${user.id} == ${checkUserId}" class="col-xs-1 text-center" id="save" style="border-top: 1px solid #000; cursor: pointer; padding: 0px;">
+          <div class="postFont" style="margin-top: 15px; font-size: 12px;">저장됨</div>
+        </div>
+        <div class="col-xs-1"> </div>
+        <div class="col-xs-4"></div>
+      </div>
+    </div>
+
+    <div class="postContent">
+      <div class="row post" >
+        <div class="col-xs-4 insList" th:each="post : ${posts}">
+          <a href="#">
+            <div class="box">
+              <div class="likeBox">
+                <span class="glyphicon glyphicon-heart"></span>
+                <span id="pfont" th:text="${post.likeCount} + '개'">2663개</span>
+                <span class="glyphicon glyphicon-pencil"></span>
+                <span id="pfont" th:text="${post.reviewCount} + '개'">126개</span>
+              </div>
+            </div>
+            <img class="img-responsive" th:src="@{/upload} + ${post.imagePath}" />
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="saveContent" style="display: none;">
+      <p style="margin-top: 32px; color: #999; font-size: 12px; font-weight: 400; margin-bottom: 16px; margin-left: 5px; ">
+        저장한 내용은 회원님만 볼 수 있습니다.</p>
+      <div class="row bookmark"></div>
+    </div>
+
+  <div th:replace="include/footer :: footer"></div>
+
+  <div class="loader"><img th:src="@{/images/loader3.gif}" alt="로딩 이미지"></div>
+
+  </div>
+
+  <script th:src="@{/js/jquery-3.2.1.js}"></script>
+  <script th:src="@{/js/search.js}"></script>
+  <script th:src="@{/js/footer_scroll.js}"></script>
+  <script th:inline="javascript">
+    let csrfHeader = $('meta[name="_csrf_header"]').attr('content');
+    let csrfToken = $('meta[name="_csrf"]').attr('content');
+
+
+    <!--  팔로워 리스트  -->
+    function openDialog(userId, followState) {
+        let url;
+        $(".dialog").show();
+        $("body").addClass("active");
+        if (followState === '0') {
+            url = "/follower/list?userId=" + userId;
+        } else {
+            url = "/follow/list?userId=" + userId;
+        }
+
+        $.ajax({
+			type: "get",
+			url: url,
+			success: function(followList) {
+				followList.forEach(function(follow, followState){
+					let tag = appendFollowerList(follow);
+					$(".dialog_main_body").append(tag);
+				});
+			}
+		});
+
+    }
+    function appendFollowerList(follow, followState) {
+        let tag = `<div class="dialog_main">`;
+        tag += `<div class="image_body">`;
+        if (follow.profileImage === null) {
+            tag += `<img src="/images/profile_default.jpg"/>`;
+        } else {
+            tag += `<img src="/upload/${follow.profileImage}"/>`;
+        }
+        tag += `</div><div class="follow_info">`;
+        tag += `<a class="follow_nickname" style="text-decoration:none;" href="/post/userPage?userId=${follow.userId}">${follow.nickname}</a>`;
+        if (follow.followForFollow == true) {
+            tag += `<a href="#" style="text-decoration:none; font-weight:700; font-size: 12px;"> · 팔로우</a>`
+        }
+        tag += `<div class="follow_name" style="color: #8e8e8e; text-decoration: none;">${follow.name}</div></div>`;
+        if (followState === '0') {
+            tag += `<div><button class="btn btn-primary btn-sm follow_btn">삭제</button></div></div>`;
+        } else {
+            tag += `<div><button class="btn btn-default btn-sm follow_btn">취소</butto></div></div>`;
+        }
+        return tag;
+    }
+
+    function closeDialog() {
+        $(".dialog").hide();
+        $("body").removeClass("active");
+        $(".dialog_main_body").empty();
+    }
+
+      <!--  팔로우   -->
+      function follow(userId) {
+        $.ajax({
+            type: "POST",
+            url: "/follow",
+            data: {
+                userId: userId
+            },
+            beforeSend : function(xhr){
+                xhr.setRequestHeader(csrfHeader, csrfToken);
+            },
+            success: function(follow) {
+              if (follow === "follow") {
+                $(".follow_btn").text("팔로우 취소");
+              } else {
+                $(".follow_btn").text("팔로우");
+              }
+            }
+        });
+
+      }
+
+
+      <!--   스크롤 이벤트   -->
+      /*<![CDATA[*/
+      var userId = [[${user.id}]];
+      /*]]>*/
+
+      let postState = "post";
+      let page = 0;
+      let bookmarkPage = 0;
+      $(window).scroll(function() {
+        let scrollTop = $(window).scrollTop();
+        let documentHeight = $(document).height();
+        let windowHeight = $(window).height();
+
+        let checkNum = ($(document).height() - $(window).height()) == $(window).scrollTop();
+        if (checkNum) {
+          if (postState === "post") {
+            page++;
+            scroll();
+          } else if (postState === "bookmark") {
+            bookmarkPage++;
+            let isScroll = true;
+            bookmarkPost(isScroll);
+          }
+        }
+        let isBottom = documentHeight == scrollTop + windowHeight;
+        if (isBottom) {
+          $(".loader").show();
+            setTimeout(function () {
+              $(".loader").hide();
+            }, 2000);
+        }
+      });
+
+      async function scroll(){
+          let response = await fetch(`/post/scroll?page=${page}&&userId=`+userId);
+          let posts = await response.json();
+
+          posts.forEach(function(post){
+            let tag = appendPostList(post);
+            $(".post").append(tag);
+          });
+      }
+
+      function appendPostList(post) {
+        let tag = `<div class="col-xs-4 insList">`;
+        tag += `<a href="#">`;
+        tag += `<div class="box">`;
+        tag += `<div class="likeBox"><span class="glyphicon glyphicon-heart"></span>`;
+        tag += `<span id="pfont">${post.likeCount}개</span>`;
+        tag += `<span class="glyphicon glyphicon-pencil"></span>`;
+        tag += `<span id="pfont">${post.reviewCount}개</span></div>`;
+        tag += `</div><img class="img-responsive" src="/upload${post.imagePath}" /></a></div>`;
+        return tag;
+      }
+
+    <!--  사용자가 북마크한 게시글 보기  -->
+    $("#save").click(function () {
+      $(".postContent").fadeOut();
+      $(".saveContent").fadeIn();
+      $(".postFont").removeClass("active");
+      $(this).find(".postFont").addClass("active");
+      postState = "bookmark";
+      bookmarkPost();
+    });
+    async function bookmarkPost(isScroll){
+      let response
+      if (isScroll) {
+        response = await fetch(`/post/bookmark/list?page=${bookmarkPage}`);
+      } else {
+        response = await fetch(`/post/bookmark/list`);
+      }
+      let posts = await response.json();
+
+      posts.forEach(function(post){
+        let tag = appendPostList(post);
+        $(".bookmark").append(tag);
+      });
+    }
+
+    <!--  사용자의 게시글 보기  -->
+    $("#post").click(function () {
+      $(".saveContent").fadeOut();
+      $(".postContent").fadeIn();
+      $(".postFont").removeClass("active");
+      $(this).find(".postFont").addClass("active");
+      $(".bookmark").empty();
+      postState = "post";
+    });
+
+  </script>
+  <script th:src="@{/js/bootstrap.js}"></script>
+
+</body>
+
+</html>

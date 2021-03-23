@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Costagram</title>
+    <link th:href="@{https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css}" rel="stylesheet">
+    <link rel="shortcut icon" th:href="@{/images/favicon.ico}">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <style>
+
+    </style>
+</head>
+<body>
+    <main id="login">
+        <div class="login__column">
+            <img th:src="@{/images/phoneImage.png}" />
+        </div>
+        <div class="login__column">
+            <div class="login__box">
+                <img th:src="@{/images/loginLogo.png}" />
+                <form th:action="@{/login_proc}" method="post" class="login__form">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                    <input type="text" name="email" placeholder="이메일" required>
+                    <input type="password" name="password" placeholder="비밀번호" autocomplete="off">
+                    <div th:if="${param.error}">
+                        <span class="alert" style="color: red;">잘못된 아이디나 암호입니다</span>
+                    </div>
+                    <input type="submit" value="로그인">
+                </form>
+                <a th:href="@{/user/findForm}" class="login__small-link">비밀번호를 잊으셨나요?</a>
+            </div>
+            <div class="login__box">
+                <span class="login__text">
+                  계정이 없신가요? <br />
+                </span>
+                <a class="login__blue-link" th:href="@{/user/join}">회원가입</a>
+            </div>
+        </div>
+    </main>
+    <div th:replace="include/footer :: footer"></div>
+    <script th:src="@{/js/jquery-3.2.1.js}"></script>
+    <script th:src="@{/js/footer_scroll.js}"></script>
+</body>
+</html>

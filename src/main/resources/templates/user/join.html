@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Costagram</title>
+  <link th:href="@{https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css}"
+    rel="stylesheet">
+    <link rel="shortcut icon" th:href="@{/images/favicon.ico}">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <style>
+      .login__btn{
+        width: 100%;
+        height: 30px;
+        border: 0;
+        color: white;
+        font-weight: 600;
+        background-color: #3897f0;
+        cursor: pointer;
+      }
+      .alert {
+        margin: 5px 0;
+      }
+    </style>
+</head>
+<body>
+  <main id="login">
+    <div class="login__column">
+      <img th:src="@{/images/phoneImage.png}" />
+    </div>
+    <div class="login__column">
+      <div class="login__box">
+        <img th:src="@{/images/loginLogo.png}" />
+        <form th:action="@{/user/join}" method="post" class="login__form">
+          <input type="email" class="email" name="email" placeholder="이메일" required oninput="emailCheck(); checkInput();">
+          <input type="text" name="name" placeholder="성명" required>
+          <input type="text" class="nickname" name="nickname" placeholder="사용자 이름" required oninput="nicknameCheck(); checkInput();">
+          <input type="password" name="password" placeholder="패스워드" required autocomplete="off">
+          <div class="alert"></div>
+          <button type="submit" class="login__btn" disabled="disabled">가입</button>
+        </form>
+      </div>
+      <div class="login__box">
+        <span class="login__text">
+          계정이 있으신가요? <br />
+        </span>
+        <a class="login__blue-link" href="/user/login">로그인</a>
+      </div>
+    </div>
+  </main>
+  <div th:replace="include/footer :: footer"></div>
+  <script th:src="@{/js/jquery-3.2.1.js}"></script>
+  <script th:src="@{/js/footer_scroll.js}"></script>
+  <script>
+    let checkEmail = false;
+    let checkNickname = false;
+
+    function checkInput() {
+      if (!checkEmail && !checkNickname) {
+        $('.login__btn').attr('disabled', 'disabled');
+      } else {
+        $('.login__btn').removeAttr('disabled');
+      }
+    }
+
+    function emailCheck() {
+      let email = $('.email').val();
+      $('.alert').empty();
+      $.ajax({
+        type: 'get',
+        url: '/user/check/email?email=' + email,
+        success: function(check) {
+          if (!check) {
+            checkEmail = false;
+            $('.alert').append('<span style="color:red;">이메일이 이미 존재합니다.</span>');
+          } else {
+            checkEmail = true;
+            $('.alert').empty();
+          }
+        }
+      });
+    };
+
+    function nicknameCheck() {
+      let nickname = $('.nickname').val();
+      $('.alert').empty();
+      $.ajax({
+        type: 'get',
+        url: '/user/check/nickname?nickname=' + nickname,
+        success: function(check) {
+          if (!check) {
+            checkNickname = false;
+            $('.alert').append('<span style="color:red;">사용자 이름이 이미 존재합니다.</span>');
+          } else {
+            checkNickname = true;
+            $('.alert').empty();
+          }
+        }
+      });
+    };
+  </script>
+</body>
+</html>
+

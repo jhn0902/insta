@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta id="_csrf" name="_csrf" th:content="${_csrf.token}"/>
+  <meta id="_csrf_header" name="_csrf_header" th:content="${_csrf.headerName}"/>
+  <title>Instagram</title>
+  <link th:href="@{https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css}"
+        rel="stylesheet">
+  <link rel="shortcut icon" th:href="@{/images/favicon.ico}">
+  <link rel="stylesheet" th:href="@{/css/styles.css}">
+  <link rel="stylesheet" th:href="@{/css/bootstrap.css}" />
+  <link rel="stylesheet" th:href="@{/css/mypage.css}">
+  <link rel="stylesheet" th:href="@{/css/placeholder.css}">
+  <link rel="stylesheet" th:href="@{/css/search.css}">
+  <link rel="stylesheet" th:href="@{/css/dialog.css}">
+  <style>
+    .col-xs-4.insList {
+      margin-bottom: 50px;
+    }
+  </style>
+</head>
+<body class="body">
+  <div th:replace="include/nav :: nav"></div>
+
+  <div class="container text-center">
+    <div class="row" >
+      <div class="col-xs-3 col-xs-offset-1" style="display:flex; margin-left: 0;">
+        <div id="profileImgs" class="text-left">
+          <button class="profileImg_btn">
+            <img class="profileImg"  th:src="@{/images/hashtag.png}">
+          </button>
+        </div>
+        <div class="tag_info" style="margin-left: 50px; text-align: left; ">
+            <div class="tag_name" style="font-size: 28px; margin-top:35px;" th:text="'#' + ${tagName}"></div>
+            <div class="tag_count" style="font-size: 18px; font-weight:400; width: 400px;" th:text="'게시물 ' + ${postCount}"></div>
+        </div>
+      </div>
+    </div><!-- row-->
+
+    <div class="postContent">
+      <div class="row post" >
+        <div class="col-xs-4 insList" th:each="post : ${posts}">
+          <a href="#">
+            <div class="box">
+              <div class="likeBox">
+                <span class="glyphicon glyphicon-heart"></span>
+                <span id="pfont" th:text="${post.likeCount} + '개'">lick count</span>
+                <span class="glyphicon glyphicon-pencil"></span>
+                <span id="pfont" th:text="${post.reviewCount} + '개'">review count</span>
+              </div>
+            </div>
+            <img class="img-responsive" th:src="@{/upload} + ${post?.imagePath}" />
+          </a>
+        </div>
+      </div>
+    </div>
+
+  <div th:replace="include/footer :: footer"></div>
+
+  <div class="loader"><img th:src="@{/images/loader3.gif}" alt="로딩 이미지"></div>
+
+  </div>
+
+  <script th:src="@{/js/jquery-3.2.1.js}"></script>
+  <script th:src="@{/js/search.js}"></script>
+  <script th:src="@{/js/footer_scroll.js}"></script>
+  <script th:inline="javascript">
+
+    let csrfHeader = $('meta[name="_csrf_header"]').attr('content');
+    let csrfToken = $('meta[name="_csrf"]').attr('content');
+
+    <!--   스크롤 이벤트   -->
+    let postState = "post";
+    let page = 0;
+    let bookmarkPage = 0;
+    $(window).scroll(function() {
+    let scrollTop = $(window).scrollTop();
+    let documentHeight = $(document).height();
+    let windowHeight = $(window).height();
+
+    let checkNum = ($(document).height() - $(window).height()) == $(window).scrollTop();
+    if (checkNum) {
+      if (postState === "post") {
+        page++;
+        scroll();
+      } else if (postState === "bookmark") {
+        bookmarkPage++;
+        let isScroll = true;
+        bookmarkPost(isScroll);
+      }
+    }
+    let isBottom = documentHeight == scrollTop + windowHeight;
+    if (isBottom) {
+      $(".loader").show();
+        setTimeout(function () {
+          $(".loader").hide();
+        }, 2000);
+    }
+    });
+
+    async function scroll(){
+      let response = await fetch(`/post/scroll?page=${page}&&userId=`+userId);
+      let posts = await response.json();
+
+      posts.forEach(function(post){
+        let tag = appendPostList(post);
+        $(".post").append(tag);
+      });
+    }
+
+    function appendPostList(post) {
+    let tag = `<div class="col-xs-4 insList">`;
+        tag += `<a href="#">`;
+        tag += `<div class="box">`;
+        tag += `<div class="likeBox"><span class="glyphicon glyphicon-heart"></span>`;
+        tag += `<span id="pfont">2663개</span>`;
+        tag += `<span class="glyphicon glyphicon-pencil"></span>`;
+        tag += `<span id="pfont">126개</span></div>`;
+        tag += `</div><img class="img-responsive" src="/upload${post.imagePath}" /></a></div>`;
+        return tag;
+    }
+
+  </script>
+  <script th:src="@{/js/bootstrap.js}"></script>
+
+</body>
+
+</html>

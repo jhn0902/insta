@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Instagram</title>
+  <link th:href="@{https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css}"
+        rel="stylesheet">
+  <link rel="shortcut icon" th:href="@{/images/favicon.ico}">
+  <link rel="stylesheet" th:href="@{/css/styles.css}">
+  <link rel="stylesheet" th:href="@{/css/bootstrap.css}" />
+  <link rel="stylesheet" th:href="@{/css/mypage.css}">
+  <link rel="stylesheet" th:href="@{/css/placeholder.css}">
+  <link rel="stylesheet" th:href="@{/css/search.css}">
+  <style>
+    .col-xs-4.insList {
+      margin-bottom: 50px;
+    }
+  </style>
+</head>
+<body>
+  <div th:replace="include/nav :: nav"></div>
+
+  <div class="container text-center">
+    <div class="postContent">
+      <div class="row post" >
+        <div class="col-xs-4 insList" th:each="post : ${posts}">
+          <a href="#">
+            <div class="box">
+              <div class="likeBox">
+                <span class="glyphicon glyphicon-heart"></span>
+                <span id="pfont" th:text="${post.likeCount} + '개'">2663개</span>
+                <span class="glyphicon glyphicon-pencil"></span>
+                <span id="pfont" th:text="${post.reviewCount} + '개'">126개</span>
+              </div>
+            </div>
+            <img class="img-responsive" th:src="@{/upload} + ${post.imagePath}" />
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div th:replace="include/footer :: footer"></div>
+
+  <div class="loader"><img th:src="@{/images/loader3.gif}" alt="로딩 이미지"></div>
+
+
+  <script th:src="@{/js/jquery-3.2.1.js}"></script>
+  <script th:src="@{/js/bootstrap.js}"></script>
+  <script th:src="@{/js/search.js}"></script>
+  <script>
+    $(function(){
+        if (!$('body').hasScrollBar()) {
+            $("#footer").attr("style", "display:block;");
+        }
+    });
+
+    $.fn.hasScrollBar = function() {
+        return (this.prop("scrollHeight") == 0 && this.prop("clientHeight") == 0) || (this.prop("scrollHeight") > this.prop("clientHeight"));
+    };
+
+    let page = 0;
+    $(window).scroll(function() {
+      let scrollTop = $(window).scrollTop();
+      let documentHeight = $(document).height();
+      let windowHeight = $(window).height();
+
+      let checkNum = ($(document).height() - $(window).height()) == $(window).scrollTop();
+      if (checkNum) {
+        page++;
+        console.log(page);
+        scroll();
+      }
+      let isBottom = documentHeight == scrollTop + windowHeight;
+      if (isBottom) {
+        $("#footer").attr("style", "display:block;");
+        $(".loader").show();
+          setTimeout(function () {
+            $(".loader").hide();
+          }, 2000);
+      } else {
+          $("#footer").attr("style", "display:none;");
+      }
+    });
+
+    async function scroll(){
+        let response = await fetch(`/post/suggest/scroll?page=${page}`);
+        let posts = await response.json();
+        console.log(posts);
+        posts.forEach(function(post){
+          let tag = appendPostList(post);
+          $(".post").append(tag);
+        });
+    }
+    function appendPostList(post) {
+      let tag = `<div class="col-xs-4 insList">`;
+      tag += `<a href="#">`;
+      tag += `<div class="box">`;
+      tag += `<div class="likeBox"><span class="glyphicon glyphicon-heart"></span>`;
+      tag += `<span id="pfont">${post.likeCount}개</span>`;
+      tag += `<span class="glyphicon glyphicon-pencil"></span>`;
+      tag += `<span id="pfont">${post.reviewCount}개</span></div>`;
+      tag += `</div><img class="img-responsive" src="/upload${post.imagePath}" /></a></div>`;
+      return tag;
+    }
+  </script>
+</body>
+</html>

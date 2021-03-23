@@ -1,0 +1,96 @@
+body::after {
+  content: '';
+  position: absolute;
+  background: rgba(0, 0, 0, .7);
+  left: 0; right: 0; top:0; bottom: 0;
+  display: none;
+}
+body.active::after {
+    display: block;
+}
+.dialog{
+  border: 1px solid #dbdbdb;
+  background: white;
+  color: black;
+  position: absolute;
+  left: 50%; top: 45%;
+  transform: translate(-50%, -40%);
+  width: 400px;
+  max-height: 400px;
+  min-height: 106px;
+  border-radius: 10px;
+  box-sizing: border-box;
+  z-index: 2;
+  overflow: scroll;
+  display: none;
+}
+.dialog_follow {
+  display:flex;
+}
+.dialog_follow div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 42px;
+}
+
+.name_space {
+  flex: 0 0 48px;
+}
+.dialog_name {
+  flex-grow: 1;
+}
+
+.close_btn {
+    color: black;
+}
+
+.dialog_main_body {
+  border-top: 1px solid #dbdbdb;
+}
+
+.dialog_main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 63px;
+  border-bottom-right-radius:10px;
+  border-bottom-left-radius:10px;
+}
+
+.image_body {
+  width: 54px;
+  height: 54px;
+  padding-right: 12px;
+  margin-left: 5px;
+}
+
+.image_body img {
+  width: 44px;
+  margin-left: 5px;
+  margin-top: 5px;
+  border-radius: 70%;
+  overflow: hidden;
+}
+.follow_info {
+  flex: 1 1 auto;
+  text-align: left;
+  margin-left: 10px;
+}
+.follow_nickname {
+    color: black;
+    cursor: pointer;
+    text-decoration: none;
+}
+.follow_name {
+    color: #8e8e8e;
+}
+.follow_btn {
+  margin-right: 10px;
+}
+
+.dialog span {
+  display: block;
+  cursor: pointer
+}
+

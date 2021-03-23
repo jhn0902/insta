@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Costagram</title>
+</head>
+<body>
+<sec:authorize access="isAuthenticated()">
+    <sec:authentication property="principal" var="principal" />
+</sec:authorize>
+
+<nav class="navigation" th:fragment="nav">
+	<a th:href="@{/post/feed}">
+		<img id="nav_log" th:src="@{/images/logo.png}" />
+	</a>
+
+	<div class="dialog_body">
+		<input class="search_input" type="text" placeholder="검색" oninput="search()">
+		<div class="search_dialog" style="display: none; z-index: 1;">
+			<div class="photo__header">
+			</div>
+		</div>
+	</div>
+	<div class="navigation__links">
+		<a th:href="@{/post/feed}" class="navigation__link">
+			<i class="fa fa-home"></i>
+		</a>
+		<a th:href="@{/post/suggest}" class="navigation__link">
+			<i class="fa fa-compass"></i>
+		</a>
+<!--		<a href="#" class="navigation__link like_popup">-->
+<!--			<i class="fa fa-heart-o"></i>-->
+<!--		</a> -->
+		<a onclick="toggleDialog()" class="navigation__link" style="cursor: pointer">
+			<i class="fa fa-user-o"></i>
+		</a>
+		<div class="profile_dialog" style="display: none; z-index: 1;">
+			<div class="profile" onclick="location.href='/post/userPage'">프로필</div>
+			<div class="logout" onclick="location.href='/logout'">로그아웃</div>
+		</div>
+	</div>
+</nav>
+<!-- 좋아요 Modal 시작 -->
+<div id="modal">
+  <div id="like_popup_list">
+	  <div class="like_popup_items">
+	  </div>
+	  <div class="like_popup_close">
+	      <button type="button">닫기</button>
+	  </div>
+  </div>
+
+</div>
+<!-- 좋아요 Modal 끝 -->
+
+</body>
+</html>

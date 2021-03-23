@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<meta id="_csrf" name="_csrf" th:content="${_csrf.token}"/>
+	<meta id="_csrf_header" name="_csrf_header" th:content="${_csrf.headerName}"/>
+	<title>Costagram</title>
+	<link th:href="@{https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css}"
+		rel="stylesheet">
+	<link rel="shortcut icon" th:href="@{/images/favicon.ico}">
+	<link rel="stylesheet" th:href="@{/css/styles.css}">
+	<link rel="stylesheet" th:href="@{/css/placeholder.css}">
+	<link rel="stylesheet" th:href="@{/css/search.css}">
+	<style>
+		.search_dialog {
+			color: gray;
+		}
+		.review_btn {
+		  background-color: transparent;
+		  text-decoration: underline;
+		  border: none;
+		  text-decoration: none;
+		  cursor: disabled;
+		  padding: 0;
+		  color:#dceefe;
+		}
+		.loader {
+			text-align: center;
+			position: fixed;
+			bottom: 20px;
+			left: 0;
+			width: 100%;
+			display: none;
+		}
+		.photo_tag_name {
+			color:#00376b;
+		}
+	</style>
+</head>
+<body>
+	<div th:replace="include/nav :: nav"></div>
+	<main id="feed">
+		<div class="photo u-default-box" th:each="post : ${posts}" >
+			<header class="photo__header">
+				<img th:if="${post?.profileImage == null}" th:src="@{/images/profile_default.jpg}">
+				<img th:unless="${post?.profileImage == null}" th:src="@{/upload} + ${post.profileImage}">
+
+				<div class="photo_user_info">
+					<a class="photo__username" th:href="@{/post/userPage?userId=} + ${post.userId}" th:text="${post.username}" style="color: black;">username</a>
+					<span class="photo__location" th:text="${post.location}">image location</span>
+				</div>
+			</header>
+			<div class="photo_post_image">
+				<img th:src="@{/upload} + ${post.imagePath}" />
+			</div>
+			<div class="photo__info">
+				<div class="photo__actions">
+					<span class="photo__action" >
+						<i th:if="${post.heart}" th:onclick="|javascript:like('${post.id}')|" th:id="${post.id}" class="fa fa-heart heart heart-clicked"></i>
+						<i th:unless="${post.heart}" th:onclick="|javascript:like('${post.id}')|" th:id="${post.id}" class="fa fa-heart-o heart"></i>
+					</span>
+					<span class="photo__action">
+						<i class="fa fa-comment-o"></i>
+					</span>
+					<span class="photo__action" style="margin-left: 470px;">
+						<i th:if="${post.checkBookmark}" class="fa fa-bookmark" th:id="'bookmark_'+${post.id}" th:onclick="|javascript:bookmark('${post.id}')|"></i>
+						<i th:unless="${post.checkBookmark}" class="fa fa-bookmark-o" th:id="'bookmark_'+${post.id}" th:onclick="|javascript:bookmark('${post.id}')|"></i>
+					</span>
+				</div>
+
+				<!-- 수정 좋아요 카운트 증가 좋아요 -->
+				<span class="photo__likes">좋아요 <span class="photo__likes" th:id="'photo_likes_count_' + ${post.id}" th:text="${post.likeCount}"></span>개</span>
+
+				<div class="photo_caption">
+					<a class="photo__username" th:href="@{/post/userPage?userId=} + ${post.userId}" th:text="${post.username}" style="color:black;"></a><span th:text="' ' + ${post.content}"></span>
+				</div>
+				<div class="photo_tag" th:each="tag : ${post.tags}" style="display: inline-block;">
+					<a class="photo_tag_name" th:text="'#' + ${tag}" th:href="@{/post/tag?tagName=} + ${tag}"></a>
+				</div>
+				<ul class="photo__comments" th:id="'photo__comments_' + ${post.id}">
+					<div class="test" th:each="review : ${post.reviews}">
+						<li class="photo__comment" th:id="'photo__comment_' + ${post.id}">
+							<span class="photo__comment-author" th:text="${review.user.nickname}">reivew user nickname</span>
+							<span th:text="${review.content}">review content</span>
+						</li>
+						<li class="photo__comment" th:if="${review.id == null}">
+							<span class="photo__comment-author" th:text="null">null</span>
+						</li>
+					</div>
+				</ul>
+				<span class="photo__date" th:text="${post.createDate}"></span>
+				<div class="photo__add-comment-container">
+					<input class="review_post" type="hidden" name="postId" th:value="${post.id}">
+					<textarea class="review_content" th:id="'review_content_' + ${post.id}"
+							  th:attr="oninput=|javascript:textCheck('${post.id}')|" placeholder="댓글 달기..." name="content"></textarea>
+					<button class="review_btn" type="button" th:id="'review_btn_' + ${post.id}" th:attr="onclick=|javascript:prepare('${post.id}')|"
+					   disabled="disabled" >게시</button>
+				</div>
+			</div>
+		</div>
+		<div th:replace="include/footer :: footer"></div>
+	</main>
+
+	<div class="loader"><img th:src="@{/images/loader3.gif}" alt="로딩 이미지"></div>
+
+
+	<script th:src="@{/js/jquery-3.2.1.js}"></script>
+	<script th:src="@{/js/search.js}"></script>
+	<script th:src="@{/js/footer_scroll.js}"></script>
+	<script>
+		function textCheck(postId) {
+			let text = $('#review_content_'+postId).val();
+			console.log(text);
+			if (text === '') {
+				console.log('empty');
+				$("#review_btn_"+postId).attr('disabled', 'disabled');
+				$("#review_btn_"+postId).attr('style', 'cursor:disabled; color:#dceefe;');
+			} else {
+				console.log('no empty');
+				$("#review_btn_"+postId).removeAttr('disabled');
+				$("#review_btn_"+postId).attr('style', 'color:#71baf8; cursor:pointer;');
+			}
+		}
+
+		let csrfHeader = $('meta[name="_csrf_header"]').attr('content');
+		let csrfToken = $('meta[name="_csrf"]').attr('content');
+
+		function prepare(postId) {
+			let content = $("#review_content_"+postId).val();
+			console.log(content);
+			if (content !== ''){
+				$.ajax({
+					type: "POST",
+					url: "/review/prepare",
+					data: {
+						postId: postId,
+						content: content
+					},
+					beforeSend : function(xhr){
+						xhr.setRequestHeader(csrfHeader, csrfToken);
+					},
+					success: function(review) {
+						let tag = appendReview(review);
+						$("#photo__comments_"+postId).prepend(tag);
+						$(".review_content").val('');
+						$(".review_btn_"+postId).attr('disabled', 'disabled');
+						$(".review_btn_"+postId).attr('style', 'cursor:disabled; color:#dceefe;');
+					}
+				});
+			}
+		};
+
+		function appendReview(review) {
+			let append = `<li class="photo__comment">`;
+			append += `<span class="photo__comment-author">${review.username}</span> ${review.content}</li>`;
+			return append;
+		}
+
+		function like(postId){
+			$.ajax({
+				type: "POST",
+				url: "/like",
+				data: {
+					postId: postId,
+				},
+				beforeSend : function(xhr){
+					xhr.setRequestHeader(csrfHeader, csrfToken);
+				},
+				success: function(msg) {
+					let likeCount = Number($("#photo_likes_count_"+postId).text());
+					console.log('likeCount = ' + likeCount);
+					console.log(msg);
+					if(msg === "like"){
+						likeCount += 1;
+						$("#photo_likes_count_"+postId).text(likeCount);
+						$("#"+postId).toggleClass("heart-clicked fa-heart fa-heart-o");
+					}else if(msg === "cancelLike"){
+						likeCount -= 1;
+						$("#photo_likes_count_"+postId).text(likeCount);
+						$("#"+postId).toggleClass("heart-clicked fa-heart fa-heart-o");
+					}else{
+						alert(msg);
+					}
+				}
+			});
+		}
+
+
+	function bookmark(postId){
+		$.ajax({
+			type: "POST",
+			url: "/bookmark",
+			data: {
+				postId: postId,
+			},
+			beforeSend : function(xhr){
+				xhr.setRequestHeader(csrfHeader, csrfToken);
+			},
+			success: function(msg) {
+				if(msg){
+					$("#bookmark_"+postId).attr("class", "fa fa-bookmark");
+				}else {
+					$("#bookmark_"+postId).attr("class", "fa fa-bookmark-o");
+				}
+			}
+		});
+	}
+
+
+	let page = 0;
+
+	$(window).scroll(function() {
+		let scrollTop = $(window).scrollTop();
+		let documentHeight = $(document).height();
+		let windowHeight = $(window).height();
+
+		/*버그 수정 (근사치 계산)*/
+		let checkNum = ($(window).scrollTop()) - ($(document).height() - $(window).height());
+		if (checkNum < 1 && checkNum > -1) {
+			console.log('hi');
+			page++;
+			scroll(); // 박스 3개씩 로드
+		}
+
+		let isBottom = documentHeight == scrollTop + windowHeight;
+		if (isBottom) {
+		  $(".loader").show();
+		  setTimeout(function () {
+			$(".loader").hide();
+			  console.log('hi');
+		  }, 1500);
+		}
+	});
+
+	function appendMainPostList(post) {
+		box = `<div class="photo u-default-box">`;
+		box += `<header class="photo__header">`;
+		box += `<img src="/upload/${post.profileImage}" onerror="this.onerror=null; this.src='/images/profile_default.jpg'"/>`;
+		box += `<div class="photo_user_info">`;
+		box += `<span class="photo__username">${post.username}</span>`;
+		box += `<span class="photo__location">${post.location}</span></div></header>`;
+		box += `<div class="photo_post_image">`;
+		box += `<img src="/upload${post.imagePath}" /></div>`;
+		box += `<div class="photo__info"><div class="photo__actions"><span class="photo__action">`;
+
+		if(post.heart === true){
+			box += `<i onclick="like('${post.id}')" id="${post.id}" class="fa fa-heart heart heart-clicked"></i>`;
+		}else{
+			box += `<i onclick="like('${post.id}')" id="${post.id}" class="fa fa-heart-o heart"></i>`;
+		}
+
+		box += `</span> <span class="photo__action">`;
+		box += `<i class="fa fa-comment-o"></i></span>`;
+		box += `<span class="photo__action" style="margin-left: 470px;">`;
+		if(post.checkBookmark === true){
+			box += `<i onclick="bookmark('${post.id}')" id="bookmark_${post.id}" class="fa fa-bookmark"></i>`;
+		}else{
+			box += `<i onclick="bookmark('${post.id}')" id="bookmark_${post.id}" class="fa fa-bookmark-o"></i>`;
+		}
+
+		// 수정 좋아요 카운트 증가
+		box += `</span></div><span class="photo__likes">좋아요 <span class="photo__likes" id="photo_likes_count_${post.id}">${post.likeCount}</span><span class="photo__likes">개</span></span>`;
+		box += `<div class="photo_caption"><a class="photo__username" href="#" style="color:black;">${post.username} </a>`;
+		box += `<span>${post.content}</span></div><div class="photo_tag" style="display: inline-block;">`;
+
+
+
+		post.tags.forEach(function(tag) {
+			box += `<a href="/post/tag?tagName=${tag}" class="photo_tag_name">#${tag}</a>`;
+		});
+
+
+		box +=`</div>`;
+		box += `<ul class="photo__comments" id="photo__comments_${post.id}">`;
+
+		post.reviews.forEach(function(review) {
+			box += `<li class="photo__comment">`;
+			box += `<span class="photo__comment-author">${review.user.nickname}</span>`;
+			box += `<span>${review.content}</span></li>`
+		});
+
+		box += `</ul><span class="photo__date">${post.createDate}</span>`;
+		box += `<div class="photo__add-comment-container">`;
+		box += `<textarea class="review_content" id="review_content_${post.id}" oninput="textCheck('${post.id}')" placeholder="댓글 달기..." name="content"></textarea>`;
+		box += `<button class="review_btn" type="button" id="review_btn_${post.id}" onclick="prepare(${post.id})" disabled="disabled" >게시</button></div></div></div >`;
+		return box;
+	}
+
+
+	function scroll() {
+		$.ajax({
+			type: "get",
+			url: "/post/feed/scroll?page="+ page,
+			success: function(posts) {
+			console.log(posts);
+				posts.forEach(function(post){
+					let tag = appendMainPostList(post);
+					$("#feed").append(tag);
+				});
+			}
+		});
+    }
+	</script>
+</body>
+</html>

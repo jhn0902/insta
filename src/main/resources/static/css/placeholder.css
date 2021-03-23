@@ -1,0 +1,12 @@
+#search_input::-webkit-input-placeholder { text-align:center; }
+#search_input::-moz-placeholder { text-align:center; }
+#search_input:-ms-input-placeholder { text-align:center; }
+#search_input:-moz-placeholder { text-align:center; }
+#search_input::placeholder { text-align:center; }
+
+#footer {
+    display:none;
+    position:fixed;
+    left:0px; right:0px;
+    bottom:0;
+}

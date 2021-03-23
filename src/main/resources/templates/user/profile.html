@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<meta id="_csrf" name="_csrf" th:content="${_csrf.token}"/>
+<meta id="_csrf_header" name="_csrf_header" th:content="${_csrf.headerName}"/>
+<head>
+    <meta charset="UTF-8">
+    <title>profile</title>
+    <link th:href="@{https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css}"
+          rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/bootstrap.css}">
+    <link rel="shortcut icon" th:href="@{/images/favicon.ico}">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link rel="stylesheet" th:href="@{/css/placeholder.css}">
+    <link rel="stylesheet" th:href="@{/css/placeholder.css}">
+    <link rel="stylesheet" th:href="@{/css/search.css}">
+    <style>
+		.container{
+			background-color: #fff;
+			margin-top: 80px;
+			margin-bottom: 50px;
+		}
+		.row {
+		    padding-top: 50px;
+		    padding-bottom: 50px;
+		}
+		input[id=intro] {
+		 	/*소개 부분 높이 설정*/
+		 padding: 50px;
+		 margin: 0px;
+		}
+
+		.profileImg_btn {
+			width: 50px;
+			height: 50px;
+			overflow: hidden;
+			border-radius: 50%;
+			padding: 0;
+			border: 0;
+			margin-left: 30px;
+		}
+		.profileImg_btn img {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+			padding: 0;
+		}
+		.edit-pw {
+            margin-top: 10px;
+		}
+		.col-xs-8{
+			box-sizing: border-box;
+			border-left: 0.5px solid #BDBDBD;
+		}
+		div{
+			box-sizing: border-box;
+		}
+		.col-xs-3{
+			font-size: 15px;
+			padding-right: 0;
+			padding-left: 0;
+
+		}
+		.bottom_border{
+			width: 415px;
+			height: 60px;
+			border-bottom: 1px solid #BDBDBD;
+			margin-top: 32px;
+		    margin-bottom: 16px;
+		    padding-bottom: 12px;
+		}
+		.nav > li > a{
+			color:black;
+			font-size:16px;
+		 	line-height: 20px;
+		 	padding: 16px 16px 16px 30px;
+
+		}
+		.nav > li > a:hover{
+			border-left :2px solid #BDBDBD ;
+
+		}
+		.a_click{
+			font-weight:bold;
+			border-left: 2px solid black;
+		}
+		.footer{
+			background-color: #fafafa;
+			position:absolute;
+			top:850px;
+			text-align: center;
+			margin: 0 auto;
+			width:100%;
+			font-size:12px;
+			font-weight: bold;
+		}
+
+
+
+	</style>
+</head>
+<body>
+<div th:replace="include/nav :: nav"></div>
+
+<div class="container">
+    <div class="row " style="border:1px solid #BDBDBD;">
+        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3 hidden-xs">
+            <ul class="nav nav-stacked">
+                <li class="a_click active">
+                    <a href="#profile" data-toggle="tab" class="menu">프로필 편집</a>
+                </li>
+                <li>
+                    <a href="#pwd" data-toggle="tab" class="menu">비밀번호 변경 </a>
+                </li>
+            </ul>
+        </div><!-- col-xs-4 -->
+
+        <div class="col-sm-8 col-xs-12 ">
+            <div class="tab-content" style="min-height:333px;">
+                <!-- 1. id가 profile일때 -->
+                <div class="tab-pane in active" id="profile">
+                    <form class="form-horizontal" th:action="@{/user/profile}" method="post"
+                          enctype="multipart/form-data">
+                        <div class="form-group">
+                            <div id="profileImgs" class="col-sm-3 control-label text-left">
+                                <button class="profileImg_btn" id="profile_img_btn" disabled="disabled">
+                                    <img th:if="${user.profileImage == null}" class="profileImg" alt=""
+                                         src="https://scontent.cdninstagram.com/v/t51.2885-19/44884218_345707102882519_2446069589734326272_n.jpg?_nc_ht=scontent.cdninstagram.com&_nc_ohc=8AUoZNYMP5IAX_1X7X3&oh=965c84d6ff2bc182580e05cf45911085&oe=605FE68F&ig_cache_key=YW5vbnltb3VzX3Byb2ZpbGVfcGlj.2">
+                                    <img th:unless="${user.profileImage == null}" class="profileImg"
+                                         th:src="@{/upload} + ${user.profileImage}">
+                                </button>
+                            </div>
+                            <div class="col-sm-9 control-label " id="basic">
+                                <div style="float:left;">
+                                    <div class="text-left" th:text="${user.nickname}" style="font-size:20px;">username
+                                    </div>
+                                    <label class="btn-file" style="cursor:pointer; color:#6699ff;">
+                                        프로필 사진 수정 <input id="input-img" type="file" name="file"
+                                                         onchange="setThumbnail(event);" style="display:none;">
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="name" class="col-sm-3 control-label">이름</label>
+                            <div class="col-sm-9">
+                                <input th:value="${user.name}" type="text" class="form-control" id="name" name="name"/>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="nickname" class="col-sm-3 control-label">사용자 이름</label>
+                            <div class="col-sm-9">
+                                <input th:value="${user.nickname}" type="text" class="form-control" id="nickname"
+                                       name="nickname" oninput="checkNickname()"/>
+                            </div>
+                            <div class="alert"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="introduce" class="col-sm-3 control-label">소개</label>
+                            <div class="col-sm-9 ">
+                                <input th:value="${user.introduce}" type="text" class="form-control" id="introduce"
+                                       name="introduce">
+
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-offset-3 col-sm-9">
+                                <span id="helpBlock" class="help-block">개인정보</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email" class="col-sm-3 control-label">이메일</label>
+                            <div class="col-sm-9">
+                                <input th:value="${user.email}" type="text" class="form-control"
+                                       id="email" name="email" readonly/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="phone" class="col-sm-3 control-label">전화번호</label>
+                            <div class="col-sm-9">
+                                <input th:value="${user.phone}" type="text" class="form-control" id="phone"
+                                       name="phone"/>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="gender" class="col-sm-3 control-label">성별</label>
+                            <div class="col-sm-4">
+                                <select class="form-control" name="gender" id="gender">
+                                    <option th:selected="${user.gender == null}" value="">선택안함</option>
+                                    <option th:selected="${user.gender}=='M'" value="M">남성</option>
+                                    <option th:selected="${user.gender}=='F'" value="F">여성</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-sm-6 col-sm-offset-3">
+                                <button type="submit" class="btn btn-primary submit_btn">제출</button>
+                            </div>
+                        </div>
+                    </form>
+                </div> <!-- id=profile (프로필 변경 ) -->
+                <div class="tab-pane" id="pwd">
+
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <div id="profileImgs" class="col-sm-3 control-label text-left">
+                                <button class="profileImg_btn">
+                                    <img th:if="${user.profileImage == null}" class="profileImg" alt=""
+                                         src="https://scontent.cdninstagram.com/v/t51.2885-19/44884218_345707102882519_2446069589734326272_n.jpg?_nc_ht=scontent.cdninstagram.com&_nc_ohc=8AUoZNYMP5IAX_1X7X3&oh=965c84d6ff2bc182580e05cf45911085&oe=605FE68F&ig_cache_key=YW5vbnltb3VzX3Byb2ZpbGVfcGlj.2">
+                                    <img th:unless="${user.profileImage == null}" class="profileImg"
+                                         th:src="@{/upload} + ${user.profileImage}">
+                                </button>
+                            </div>
+                            <div class="col-sm-9 control-label " id="basic">
+                                <div style="float:left;">
+                                    <div class="edit-pw text-left" style="font-size:20px;">Acorn</div>
+                                </div>
+                            </div>
+                        </div>
+                        <form th:action="@{/user/update/pw}" method="post" name="pwdForm" id="pwdForm" novalidate>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">이전 비밀번호</label>
+                                <div class="col-sm-9">
+                                    <input type="password" class="form-control" id="prev_pwd" name="oldPassword"
+                                           ng-required="true" ng-model="prev_pwd" autocomplete="off"/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">새 비밀번호</label>
+                                <div class="col-sm-9">
+                                    <input type="password" class="form-control" id="new_pwd1" name="newPassword"
+                                           ng-required="true" ng-model="new_pwd1" autocomplete="off"/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">새 비밀번호 확인</label>
+                                <div class="col-sm-9">
+                                    <input type="password" class="form-control" id="new_pwd2" ng-required="true"
+                                           ng-model="new_pwd2" autocomplete="off">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="col-sm-9 col-sm-offset-3">
+                                    <p id="pwdCheck"></p>
+                                </div>
+                                <div class="col-sm-6 col-sm-offset-3">
+                                    <button id="pwdBtn" ng-disabled="pwdForm.$invalid" type="submit"
+                                            class="btn btn-primary">비밀번호 변경
+                                    </button>
+                                </div>
+                                <br/>
+                            </div>
+                            <!--                    </div>-->
+                        </form>
+
+                    </div>
+
+                </div> <!-- end tab-pane-->
+
+            </div> <!-- end tab-content-->
+
+        </div> <!-- end col-sm-8 col-xs-12-->
+    </div> <!-- row-->
+    <div th:replace="include/footer :: footer"></div>
+</div><!-- container-->
+
+    <script th:src="@{/js/jquery-3.2.1.js}"></script>
+    <script th:src="@{/js/bootstrap.js}"></script>
+    <script th:src="@{/js/search.js}"></script>
+    <script th:src="@{/js/footer_scroll.js}"></script>
+    <script th:inline="javascript">
+    let csrfHeader = $('meta[name="_csrf_header"]').attr('content')
+    let csrfToken = $('meta[name="_csrf"]').attr('content')
+
+    /*<![CDATA[*/
+      let oldNickname = [[${user.nickname}]];
+    /*]]>*/
+
+    function checkNickname() {
+      $('.alert').empty();
+      let nickname = $('#nickname').val();
+      console.log(nickname);
+      console.log("oldNickname = " + oldNickname);
+      console.log(nickname === oldNickname);
+      $.ajax({
+        type: 'get',
+        url: '/user/check/nickname?nickname=' + nickname,
+        success: function(check) {
+          if(nickname === oldNickname) {
+            $('.alert').empty();
+            $('.submit_btn').removeAttr('disabled');
+          } else if (!check) {
+            $('.alert').append('<span style="color:red;">사용자 이름이 이미 존재합니다.</span>');
+            $('.submit_btn').attr('disabled', 'disabled');
+          } else {
+            $('.alert').empty();
+            $('.submit_btn').removeAttr('disabled');
+          }
+        }
+      });
+    };
+
+    function setThumbnail(e) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            $(".profileImg").attr("src", e.target.result);
+        }
+        reader.readAsDataURL(e.target.files[0]);
+    }
+
+		$(".menu").click(function(){
+			$(".nav-stacked > li").removeClass("a_click");
+			$(this)
+			.parent()
+			.addClass("a_click");
+		});
+
+		var isCheck = false
+		$("#prev_pwd").on("blur", function() {
+            $.ajax({
+                type: "POST",
+                url: "/user/check",
+                data: { pw: $("#prev_pwd").val() },
+                beforeSend : function(xhr){
+                    xhr.setRequestHeader(csrfHeader, csrfToken);
+                },
+                success: function(check) {
+                    if(!check) {
+                        $("#pwdCheck")
+                        .text("비밀번호가 일치하지 않습니다.")
+                        .css("color","red");
+                        isCheck = false;
+                    } else {
+                        $("#pwdCheck")
+                        .text("")
+                        isCheck = true;
+                    }
+                }
+            });
+        });
+
+		$("#pwdBtn").click(function(){
+			var pwd1= $("#new_pwd1").val();
+		});
+
+		$("#pwdForm").submit(function(){
+			var pwd1= $("#new_pwd1").val();
+			var pwd2= $("#new_pwd2").val();
+
+			if(pwd1!=pwd2){
+				$("#pwdCheck")
+				.text("새로운 비밀번호 값이 서로 일치하지 않습니다.")
+				.css("color","red");
+				return false;
+			}
+			if(!isCheck) {
+			    $("#pwdCheck")
+                .text("비밀번호가 일치하지 않습니다.")
+                .css("color","red");
+                return false;
+			}
+		});
+		async function check(){
+          let response = await fetch(`/user/check`);
+          let check = await response.json();
+        }
+
+	    //Scroll Event
+	    $(window).on("scroll", function(e) {
+	      var scrollTop = $(window).scrollTop();
+	      if(scrollTop > 50) {
+	        $('.nav-insta').addClass("nav-small");
+	        $('.nav-container').addClass("container-small");
+	        $('.nav-fixed-1').stop().hide();
+	        $('.nav-fixed-2').stop().fadeIn(500);
+			$('body').addClass("body-small");
+	      }
+	      else {
+	        $('.nav-insta').removeClass("nav-small");
+	        $('.nav-container').removeClass("container-small");
+	        $('.nav-fixed-2').stop().hide();
+	        $('.nav-fixed-1').stop().fadeIn(500);
+	        $('body').removeClass("body-small");
+	      }
+	    });
+
+	//Moving to the other pages
+    function fn_movePage(pageNm) {
+      //Loading a progress bar
+      $('#nprogress').show();
+        var wPercent = 0;
+        var intId = setInterval(function() {
+          if(wPercent > 100) {
+            clearInterval(intId);
+            location.href = pageNm + ".html";
+          }
+          $('#nprogress').css("width",  wPercent + "%");
+          wPercent += 0.6;
+        } , 10);
+    }
+
+
+    </script>
+</body>
+</html>
