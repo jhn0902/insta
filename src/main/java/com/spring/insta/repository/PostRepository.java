@@ -13,6 +13,7 @@ import java.util.List;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
     Page<Post> findAll(Pageable pageable);
+
     Page<Post> findAllByUserId(Pageable pageable, Long userId);
 
     @Query("select p from Post p where p.user.id in (select f.toUser.id from Follow f where f.fromUser.id = :userId) or p.user.id = :userId")
