@@ -41,6 +41,7 @@
           <button type="submit" class="login__btn" disabled="disabled">가입</button>
         </form>
       </div>
+
       <div class="login__box">
         <span class="login__text">
           계정이 있으신가요? <br />
@@ -65,12 +66,14 @@
     }
 
     function emailCheck() {
+      console.log("email check")
       let email = $('.email').val();
       $('.alert').empty();
       $.ajax({
         type: 'get',
         url: '/user/check/email?email=' + email,
         success: function(check) {
+          console.log("success = " + check)
           if (!check) {
             checkEmail = false;
             $('.alert').append('<span style="color:red;">이메일이 이미 존재합니다.</span>');

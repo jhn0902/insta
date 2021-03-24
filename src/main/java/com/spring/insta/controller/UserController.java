@@ -91,12 +91,13 @@ public class UserController {
     }
 
     @GetMapping("/check/email")
-    public @ResponseBody Boolean checkEmail(@RequestParam("email") String email) {
+    @ResponseBody
+    public Boolean checkEmail(@RequestBody @RequestParam("email") String email) {
         return userService.checkEmail(email);
     }
 
     @GetMapping("/check/nickname")
-    public @ResponseBody Boolean checkNickname(@RequestParam("nickname") String nickname) {
+    public @ResponseBody Boolean checkNickname(@RequestBody @RequestParam("nickname") String nickname) {
         return userService.checkNickname(nickname);
     }
 

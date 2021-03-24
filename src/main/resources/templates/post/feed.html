@@ -264,14 +264,9 @@
 		box += `</span></div><span class="photo__likes">좋아요 <span class="photo__likes" id="photo_likes_count_${post.id}">${post.likeCount}</span><span class="photo__likes">개</span></span>`;
 		box += `<div class="photo_caption"><a class="photo__username" href="#" style="color:black;">${post.username} </a>`;
 		box += `<span>${post.content}</span></div><div class="photo_tag" style="display: inline-block;">`;
-
-
-
 		post.tags.forEach(function(tag) {
 			box += `<a href="/post/tag?tagName=${tag}" class="photo_tag_name">#${tag}</a>`;
 		});
-
-
 		box +=`</div>`;
 		box += `<ul class="photo__comments" id="photo__comments_${post.id}">`;
 
