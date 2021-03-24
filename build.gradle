@@ -29,6 +29,8 @@ dependencies {
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	compile group: 'org.modelmapper', name: 'modelmapper', version: '2.3.0'
 	compile("org.springframework.boot:spring-boot-starter-mail")
+	compile files("${System.getProperty('java.home')}/../lib/tools.jar")
+	compile("mysql:mysql-connector-java")
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.h2database:h2'
 	annotationProcessor 'org.projectlombok:lombok'
