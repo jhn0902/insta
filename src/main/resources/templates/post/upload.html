@@ -50,7 +50,7 @@
 						<td><input type="text" name="tags" placeholder="#태그"></td>
 					</tr>
 				</table>
-				<input type="submit" value="업로드">
+				<input class="upload_btn" type="button" value="업로드">
 			</form>
 			</div>
 			<div class="smallbox">
@@ -83,6 +83,7 @@
 					$('#img').attr('src', e.target.result);
 				}
 				reader.readAsDataURL(f);
+				$('.upload_btn').attr('type', 'submit');
 			});
 		}
 	</script>

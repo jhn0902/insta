@@ -219,7 +219,6 @@
 		/*버그 수정 (근사치 계산)*/
 		let checkNum = ($(window).scrollTop()) - ($(document).height() - $(window).height());
 		if (checkNum < 1 && checkNum > -1) {
-			console.log('hi');
 			page++;
 			scroll(); // 박스 3개씩 로드
 		}
@@ -229,7 +228,6 @@
 		  $(".loader").show();
 		  setTimeout(function () {
 			$(".loader").hide();
-			  console.log('hi');
 		  }, 1500);
 		}
 	});
@@ -289,7 +287,6 @@
 			type: "get",
 			url: "/post/feed/scroll?page="+ page,
 			success: function(posts) {
-			console.log(posts);
 				posts.forEach(function(post){
 					let tag = appendMainPostList(post);
 					$("#feed").append(tag);

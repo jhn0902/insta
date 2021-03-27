@@ -22,7 +22,8 @@ public class FollowController {
     private final UserService userService;
 
     @GetMapping("follower/list")
-    public @ResponseBody List<FollowResponseDto> followerList(@RequestParam("userId") Long userId) {
+    public @ResponseBody
+    List<FollowResponseDto> followerList(@RequestParam("userId") Long userId) {
         List<Follow> followers = followService.findFollowers(userId);
         User findUser = userService.findUser(userId);
         for (Follow follower : followers) {
@@ -31,19 +32,20 @@ public class FollowController {
                 follower.changeF4F(true);
             }
         }
-
         return FollowResponseDto.ofFollower(followers);
     }
 
     @GetMapping("follow/list")
-    public @ResponseBody List<FollowResponseDto> followList(@RequestParam("userId") Long userId) {
+    public @ResponseBody
+    List<FollowResponseDto> followList(@RequestParam("userId") Long userId) {
         List<Follow> follows = followService.findFollows(userId);
         return FollowResponseDto.ofFollow(follows);
     }
 
     @PostMapping("/follow")
-    public @ResponseBody String follow(@RequestParam("userId") Long userId,
-                                       @AuthenticationPrincipal UserContext userContext) {
+    public @ResponseBody
+    String follow(@RequestParam("userId") Long userId,
+                  @AuthenticationPrincipal UserContext userContext) {
         User fromUser = userService.findUser(userContext.getUser().getId());
         User toUser = userService.findUser(userId);
         Follow follow = followService.checkFollow(fromUser, toUser);
@@ -54,5 +56,10 @@ public class FollowController {
             followService.unFollow(follow.getId());
             return "unFollow";
         }
+    }
+
+    @PostMapping("/unFollow")
+    private @ResponseBody void unFollow(@RequestParam("followId") Long followId) {
+        followService.unFollow(followId);
     }
 }

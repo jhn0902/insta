@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -15,6 +16,7 @@ public class Tag extends BaseEntity {
     @Column(name = "tagId")
     private Long id;
 
+    @Size(max = 30)
     private String name;
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,7 +20,10 @@ public class Post extends BaseEntity {
     @Column(name = "postId")
     private Long id;
     private String content;
+
+    @Size(max = 20)
     private String location; //사진 찍은 위치
+
     private String imagePath; //포스팅 사진 경로 + 이름
 
     @ManyToOne(fetch = FetchType.LAZY)

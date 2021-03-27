@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -47,8 +46,8 @@
         <br />
         <div id="profileInfo">
           <div style="font-size: 17px; display: inline-block; margin-top: 15px">게시물 <span th:text="${postCount}==null ? 0 : ${postCount}"></span></div>
-          <a id="three" th:onclick="|javascript:openDialog('${user.id}', '0')|" style="color: black; cursor: pointer; text-decoration: none;">팔로워 <span th:text="${followerCount}==null ? 0 : ${followerCount}"></span></a>
-          <a id="three" th:onclick="|javascript:openDialog('${user.id}', '1')|" style="color: black; cursor: pointer; text-decoration: none;">팔로우 <span th:text="${followCount}==null ? 0 : ${followCount}"></span></a>
+          <a id="three" th:onclick="|javascript:openDialog('${user.id}', '0')|" style="color: black; cursor: pointer; text-decoration: none;">팔로워 <span class="follower_cnt" th:text="${followerCount}==null ? 0 : ${followerCount}"></span></a>
+          <a id="three" th:onclick="|javascript:openDialog('${user.id}', '1')|" style="color: black; cursor: pointer; text-decoration: none;">팔로우 <span class="follow_cnt" th:text="${followCount}==null ? 0 : ${followCount}"></span></a>
         </div>
         <br />
         <div th:text="${user?.name}" style="font-size: 18px; font-weight: bold;">name </div>
@@ -68,9 +67,7 @@
               </a>
           </div>
       </div>
-      <div class="dialog_main_body">
-
-      </div>
+      <div class="dialog_main_body"></div>
     </div>
     <!--  팔로우 dialog  -->
 
@@ -97,9 +94,9 @@
             <div class="box">
               <div class="likeBox">
                 <span class="glyphicon glyphicon-heart"></span>
-                <span id="pfont" th:text="${post.likeCount} + '개'">2663개</span>
+                <span id="pfont" th:text="${post.likeCount} + '개'">like count</span>
                 <span class="glyphicon glyphicon-pencil"></span>
-                <span id="pfont" th:text="${post.reviewCount} + '개'">126개</span>
+                <span id="pfont" th:text="${post.reviewCount} + '개'">review count</span>
               </div>
             </div>
             <img class="img-responsive" th:src="@{/upload} + ${post.imagePath}" />
@@ -135,24 +132,26 @@
         $("body").addClass("active");
         if (followState === '0') {
             url = "/follower/list?userId=" + userId;
+            $(".dialog_name").text("팔로워");
         } else {
             url = "/follow/list?userId=" + userId;
+            $(".dialog_name").text("팔로우");
         }
 
         $.ajax({
 			type: "get",
 			url: url,
 			success: function(followList) {
-				followList.forEach(function(follow, followState){
-					let tag = appendFollowerList(follow);
-					$(".dialog_main_body").append(tag);
-				});
+              followList.forEach(function(follow){
+                  let tag = appendFollowerList(follow, followState);
+                  $(".dialog_main_body").append(tag);
+              });
 			}
 		});
 
     }
     function appendFollowerList(follow, followState) {
-        let tag = `<div class="dialog_main">`;
+        let tag = `<div class="dialog_main dialog_main_${follow.followId}">`;
         tag += `<div class="image_body">`;
         if (follow.profileImage === null) {
             tag += `<img src="/images/profile_default.jpg"/>`;
@@ -165,10 +164,12 @@
             tag += `<a href="#" style="text-decoration:none; font-weight:700; font-size: 12px;"> · 팔로우</a>`
         }
         tag += `<div class="follow_name" style="color: #8e8e8e; text-decoration: none;">${follow.name}</div></div>`;
-        if (followState === '0') {
-            tag += `<div><button class="btn btn-primary btn-sm follow_btn">삭제</button></div></div>`;
-        } else {
-            tag += `<div><button class="btn btn-default btn-sm follow_btn">취소</butto></div></div>`;
+        if (userId === checkUserId){
+          if (followState == 0) {
+              tag += `<div><button class="btn btn-primary btn-sm follow_btn" onclick="unFollow(${follow.followId}, 0);">삭제</button></div></div>`;
+          } else {
+              tag += `<div><button class="btn btn-default btn-sm follow_btn" onclick="unFollow(${follow.followId}, 1);">취소</button></div></div>`;
+          }
         }
         return tag;
     }
@@ -180,6 +181,8 @@
     }
 
       <!--  팔로우   -->
+      let followerCnt = Number($(".follower_cnt").text());
+      let followCnt = Number($(".follow_cnt").text());
       function follow(userId) {
         $.ajax({
             type: "POST",
@@ -193,18 +196,44 @@
             success: function(follow) {
               if (follow === "follow") {
                 $(".follow_btn").text("팔로우 취소");
+                $(".follower_cnt").text(followerCnt + 1);
               } else {
                 $(".follow_btn").text("팔로우");
+                $(".follower_cnt").text(followerCnt - 1);
               }
             }
         });
+      }
 
+      function unFollow(followId, followState) {
+        $.ajax({
+            type: "POST",
+            url: "/unFollow",
+            data: {
+                followId: followId
+            },
+            beforeSend : function(xhr){
+                xhr.setRequestHeader(csrfHeader, csrfToken);
+            },
+            success: function() {
+              $(".dialog_main_" + followId).remove();
+              if (followState == 0) {
+                $(".follower_cnt").text(followerCnt - 1);
+              } else {
+                $(".follow_cnt").text(followCnt - 1);
+              }
+            }
+        });
       }
 
 
       <!--   스크롤 이벤트   -->
       /*<![CDATA[*/
       var userId = [[${user.id}]];
+      /*]]>*/
+
+      /*<![CDATA[*/
+      var checkUserId = [[${checkUserId}]];
       /*]]>*/
 
       let postState = "post";

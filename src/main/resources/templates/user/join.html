@@ -36,7 +36,7 @@
           <input type="email" class="email" name="email" placeholder="이메일" required oninput="emailCheck(); checkInput();">
           <input type="text" name="name" placeholder="성명" required>
           <input type="text" class="nickname" name="nickname" placeholder="사용자 이름" required oninput="nicknameCheck(); checkInput();">
-          <input type="password" name="password" placeholder="패스워드" required autocomplete="off">
+          <input type="password" class="password" name="password" placeholder="패스워드" required autocomplete="off">
           <div class="alert"></div>
           <button type="submit" class="login__btn" disabled="disabled">가입</button>
         </form>
@@ -66,14 +66,12 @@
     }
 
     function emailCheck() {
-      console.log("email check")
       let email = $('.email').val();
       $('.alert').empty();
       $.ajax({
         type: 'get',
         url: '/user/check/email?email=' + email,
         success: function(check) {
-          console.log("success = " + check)
           if (!check) {
             checkEmail = false;
             $('.alert').append('<span style="color:red;">이메일이 이미 존재합니다.</span>');

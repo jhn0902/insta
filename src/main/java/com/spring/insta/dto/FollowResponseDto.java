@@ -9,6 +9,7 @@ import java.util.List;
 @Data
 public class FollowResponseDto {
 
+    private Long followId;
     private Long userId;
     private String name;
     private String nickname;
@@ -16,14 +17,16 @@ public class FollowResponseDto {
     private boolean followForFollow;
 
 
-    public FollowResponseDto(Long userId, String name, String nickname, String profileImage) {
+    public FollowResponseDto(Long followId, Long userId, String name, String nickname, String profileImage) {
+        this.followId = followId;
         this.userId = userId;
         this.name = name;
         this.nickname = nickname;
         this.profileImage = profileImage;
     }
 
-    public FollowResponseDto(Long userId, String name, String nickname, String profileImage, boolean followForFollow) {
+    public FollowResponseDto(Long followId, Long userId, String name, String nickname, String profileImage, boolean followForFollow) {
+        this.followId = followId;
         this.userId = userId;
         this.name = name;
         this.nickname = nickname;
@@ -35,7 +38,7 @@ public class FollowResponseDto {
         List<FollowResponseDto> followerList = new ArrayList<>();
         for (Follow follower : followers) {
             FollowResponseDto dto =
-                    new FollowResponseDto(follower.getFromUser().getId(), follower.getFromUser().getName(),
+                    new FollowResponseDto(follower.getId(), follower.getFromUser().getId(), follower.getFromUser().getName(),
                             follower.getFromUser().getNickname(), follower.getFromUser().getProfileImage(), follower.isFollowForFollow());
             followerList.add(dto);
         }
@@ -46,7 +49,7 @@ public class FollowResponseDto {
         List<FollowResponseDto> followList = new ArrayList<>();
         for (Follow follow : follows) {
             FollowResponseDto dto =
-                    new FollowResponseDto(follow.getToUser().getId(), follow.getToUser().getName(),
+                    new FollowResponseDto(follow.getId(), follow.getToUser().getId(), follow.getToUser().getName(),
                             follow.getToUser().getNickname(), follow.getToUser().getProfileImage());
             followList.add(dto);
         }

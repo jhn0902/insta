@@ -8,25 +8,43 @@ import lombok.NoArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
+@Table(name = "users")
 public class User extends BaseEntity {
 
     @Id @GeneratedValue
     @Column(name = "userId")
     private Long id;
+
+    @NotNull @Size(max = 50)
     private String email;
+
     private String password;
+
+    @Size(max = 20)
     private String name;
+
+    @Size(max = 20)
     private String nickname; //사용자 이름
+
+    @Size(max = 10)
     private String role;
+
     private String introduce; //프로필 메세지
+
+    @Size(max = 11)
     private String phone;
+
+    @Size(max = 1)
     private String gender;
+
     private String profileImage;
 
     @OneToMany(mappedBy = "user")

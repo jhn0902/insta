@@ -14,7 +14,6 @@ function search() {
         url = "/search/tags?name=" + word.substring(1);
         name = word.substring(1);
     } else {
-        console.log("search user");
         searchCondition = "user";
         searchKeyword = word;
         url = "/search/users?name=" + word;
@@ -24,8 +23,6 @@ function search() {
             type: "get",
             url: url,
             success: function(lists) {
-                console.log(lists);
-
                 if (lists.length === 0) {
                     $(".search_dialog").hide();
                 } else {
@@ -57,7 +54,7 @@ function append(list, searchCondition) {
         if (list.profileImage === null) {
             box += `<img class="search_img" src="/images/profile_default.jpg"/>`
         } else {
-            box += `<img class="search_img" src="/upload/${list.profileImage}"/>`
+            box += `<img class="search_img" src="/upload${list.profileImage}"/>`
         }
         box += `</div><div class="search_info">`
         box += `<div class="info1">${list.nickname}</div>`
