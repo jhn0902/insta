@@ -55,39 +55,25 @@ public class UserController {
 
         String origFilename = files.getOriginalFilename();
         if (!origFilename.isEmpty()) {
-            String directoryName = "/" + LocalDate.now();
 
-            // 프로젝트 위치의 'upload' 안 저장 날짜 폴더 파일이 저장.
-            String savePath = System.getProperty("user.dir")
-                    + "/src/main/resources/static/upload" + directoryName;
-
-            // 파일이 저장되는 폴더가 없으면 폴더를 생성합니다.
-            if (!new File(savePath).exists()) {
-                try {
-                    new File(savePath).mkdir();
-                } catch (Exception e) {
-                    e.getStackTrace();
-                }
-            }
+            String savePath = "/home/ec2-user/app/project/outsta/upload";
 
             //이미지 명을 랜덤 문자로 바꾸어 저장
             String uuid = UUID.randomUUID().toString();
             String extention = origFilename.substring(origFilename.lastIndexOf("."));
+            String saveFileName = uuid + extention;
 
-            String saveFilename = uuid + extention;
-            String profileImage = directoryName + "/" + saveFilename;
-
-            String filePath = savePath + "/" + saveFilename;
+            String filePath = savePath + "/" + saveFileName;
             files.transferTo(new File(filePath));
 
-            userResponseDto.setProfileImage(profileImage);
+            userResponseDto.setProfileImage(saveFileName);
         }
 
         userResponseDto.setId(userContext.getUser().getId());
         User updateUser = UserResponseDto.toEntity(userResponseDto);
         userService.updateUser(updateUser);
 
-        return "redirect:/user/profile";
+        return "redirect:user/profile";
     }
 
     @GetMapping("/check/email")
@@ -111,7 +97,7 @@ public class UserController {
     public String updatePw(@AuthenticationPrincipal UserContext userContext,
                            @RequestParam("newPassword") String pw) {
         userService.updatePw(userContext.getUser().getId(), pw);
-        return "redirect:/user/profile";
+        return "redirect:user/profile";
     }
 
     @GetMapping("/findForm")

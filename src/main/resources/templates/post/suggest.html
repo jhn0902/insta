@@ -36,7 +36,7 @@
                 <span id="pfont" th:text="${post.reviewCount} + '개'">126개</span>
               </div>
             </div>
-            <img class="img-responsive" th:src="@{/upload} + ${post.imagePath}" />
+            <img class="img-responsive" th:src="@{/image/} + ${post.imagePath}" />
           </a>
         </div>
       </div>
@@ -103,7 +103,7 @@
       tag += `<span id="pfont">${post.likeCount}개</span>`;
       tag += `<span class="glyphicon glyphicon-pencil"></span>`;
       tag += `<span id="pfont">${post.reviewCount}개</span></div>`;
-      tag += `</div><img class="img-responsive" src="/upload${post.imagePath}" /></a></div>`;
+      tag += `</div><img class="img-responsive" src="/image/{post.imagePath}" /></a></div>`;
       return tag;
     }
   </script>

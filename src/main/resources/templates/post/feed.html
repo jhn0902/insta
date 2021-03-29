@@ -45,7 +45,7 @@
 		<div class="photo u-default-box" th:each="post : ${posts}" >
 			<header class="photo__header">
 				<img th:if="${post?.profileImage == null}" th:src="@{/images/profile_default.jpg}">
-				<img th:unless="${post?.profileImage == null}" th:src="@{/upload} + ${post.profileImage}">
+				<img th:unless="${post?.profileImage == null}" th:src="@{/image/} + ${post.profileImage}">
 
 				<div class="photo_user_info">
 					<a class="photo__username" th:href="@{/post/userPage?userId=} + ${post.userId}" th:text="${post.username}" style="color: black;">username</a>
@@ -53,7 +53,7 @@
 				</div>
 			</header>
 			<div class="photo_post_image">
-				<img th:src="@{/upload} + ${post.imagePath}" />
+				<img th:src="@{/image/} + ${post.imagePath}" />
 			</div>
 			<div class="photo__info">
 				<div class="photo__actions">
@@ -235,7 +235,7 @@
 	function appendMainPostList(post) {
 		box = `<div class="photo u-default-box">`;
 		box += `<header class="photo__header">`;
-		box += `<img src="/upload/${post.profileImage}" onerror="this.onerror=null; this.src='/images/profile_default.jpg'"/>`;
+		box += `<img src="/image/${post.profileImage}" onerror="this.onerror=null; this.src='/images/profile_default.jpg'"/>`;
 		box += `<div class="photo_user_info">`;
 		box += `<span class="photo__username">${post.username}</span>`;
 		box += `<span class="photo__location">${post.location}</span></div></header>`;

@@ -16,12 +16,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -155,7 +154,7 @@ public class PostController {
         model.addAttribute("user", user);
         model.addAttribute("checkUserId", id);
 
-        return "/post/mypage";
+        return "post/mypage";
     }
 
     @GetMapping("/scroll")
@@ -178,57 +177,30 @@ public class PostController {
 
     @PostMapping("/upload")
     public String upload(@RequestParam(value = "content", required = false) String content,
-                         @RequestParam(value = "location", required = false) String location,
-                         @RequestParam(value = "tags", required = false) String tags,
-                         @AuthenticationPrincipal UserContext userContext,
-                         @RequestParam("file") MultipartFile files) throws IOException {
+                               @RequestParam(value = "location", required = false) String location,
+                               @RequestParam(value = "tags", required = false) String tags,
+                               @AuthenticationPrincipal UserContext userContext,
+                               @RequestParam("file") MultipartFile files) throws IOException {
 
         String origFilename = files.getOriginalFilename();
-        String directoryName = "/" + LocalDate.now();
 
-        // 프로젝트 위치의 'upload' 안 저장 날짜 폴더 파일이 저장.
-        String savePath = System.getProperty("user.dir")
-                + "/src/main/resources/static/upload" + directoryName;
-
-        // 파일이 저장되는 폴더가 없으면 폴더를 생성합니다.
-        if (!new File(savePath).exists()) {
-            try {
-                new File(savePath).mkdir();
-            } catch (Exception e) {
-                e.getStackTrace();
-            }
-        }
+        String savePath = "/home/ec2-user/app/project/outsta/upload";
 
         //이미지 명을 랜덤 문자로 바꾸어 저장
         String uuid = UUID.randomUUID().toString();
         String extention = origFilename.substring(origFilename.lastIndexOf("."));
-        String saveFilename = uuid + extention;
-        String imagePath = directoryName + "/" + saveFilename;
+        String saveFileName = uuid + extention;
 
-        String filePath = savePath + "/" + saveFilename;
+        String filePath = savePath + "/" + saveFileName;
         files.transferTo(new File(filePath));
 
         User findUser = getUser(userContext);
 
-        Post post = Post.savePost(content, location, imagePath, findUser);
+        Post post = Post.savePost(content, location, saveFileName, findUser);
         postService.savePost(post, tags);
 
         return "redirect:/post/userPage";
     }
-
-    @PostMapping("/update/{postId}")
-    public String updatePost(@PathVariable("postId") Long postId,
-                             @RequestParam(value = "content", required = false) String content,
-                             @RequestParam(value = "location", required = false) String location,
-                             @RequestParam(value = "tags", required = false) String tags,
-                             @AuthenticationPrincipal UserContext userContext) throws IOException {
-
-        User findUser = getUser(userContext);
-        Post post = new Post(content, location);
-        postService.updatePost(postId, post, tags);
-        return "/";
-    }
-
 
     private User getUser(UserContext userContext) {
         User user = userContext.getUser();

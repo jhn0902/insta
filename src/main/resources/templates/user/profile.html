@@ -126,7 +126,7 @@
                                     <img th:if="${user.profileImage == null}" class="profileImg" alt=""
                                          src="https://scontent.cdninstagram.com/v/t51.2885-19/44884218_345707102882519_2446069589734326272_n.jpg?_nc_ht=scontent.cdninstagram.com&_nc_ohc=8AUoZNYMP5IAX_1X7X3&oh=965c84d6ff2bc182580e05cf45911085&oe=605FE68F&ig_cache_key=YW5vbnltb3VzX3Byb2ZpbGVfcGlj.2">
                                     <img th:unless="${user.profileImage == null}" class="profileImg"
-                                         th:src="@{/upload} + ${user.profileImage}">
+                                         th:src="@{/image/} + ${user.profileImage}">
                                 </button>
                             </div>
                             <div class="col-sm-9 control-label " id="basic">
@@ -210,10 +210,10 @@
                         <div class="form-group">
                             <div id="profileImgs" class="col-sm-3 control-label text-left">
                                 <button class="profileImg_btn">
-                                    <img th:if="${user.profileImage == null}" class="profileImg" alt=""
-                                         src="https://scontent.cdninstagram.com/v/t51.2885-19/44884218_345707102882519_2446069589734326272_n.jpg?_nc_ht=scontent.cdninstagram.com&_nc_ohc=8AUoZNYMP5IAX_1X7X3&oh=965c84d6ff2bc182580e05cf45911085&oe=605FE68F&ig_cache_key=YW5vbnltb3VzX3Byb2ZpbGVfcGlj.2">
+                                    <img th:if="${user.profileImage == null}" class="profileImg"
+                                         th:src="@{/images/profile_default.jpg}">
                                     <img th:unless="${user.profileImage == null}" class="profileImg"
-                                         th:src="@{/upload} + ${user.profileImage}">
+                                         th:src="@{/image/} + ${user.profileImage}">
                                 </button>
                             </div>
                             <div class="col-sm-9 control-label " id="basic">

@@ -35,8 +35,8 @@
 			<i class="fa fa-user-o"></i>
 		</a>
 		<div class="profile_dialog" style="display: none; z-index: 1;">
-			<div class="profile" onclick="location.href='/post/userPage'">프로필</div>
-			<div class="logout" onclick="location.href='/logout'">로그아웃</div>
+			<div class="profile"><a th:href="@{/post/userPage}" style="display: block; text-decoration: none; color: black;">프로필</a></div>
+			<div class="logout"><a th:href="@{/logout}" style="display: block; text-decoration: none; color: black;">로그아웃</a></div>
 		</div>
 	</div>
 </nav>
