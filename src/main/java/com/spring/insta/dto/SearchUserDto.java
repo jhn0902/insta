@@ -1,10 +1,12 @@
 package com.spring.insta.dto;
 
 import com.spring.insta.model.User;
+import lombok.Data;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Data
 public class SearchUserDto {
 
     private Long userId;

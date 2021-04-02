@@ -1,5 +1,7 @@
 package com.spring.insta.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -28,15 +30,18 @@ public class Post extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userId")
+    @JsonBackReference
     private User user;
 
     @OneToMany(mappedBy = "post")
+    @JsonManagedReference
     private List<Likes> likes = new ArrayList<>();
 
     @OneToMany(mappedBy = "post")
     private List<Tag> tags = new ArrayList<>();
 
     @OneToMany(mappedBy = "post")
+    @JsonManagedReference
     private List<Review> reviews = new ArrayList<>();
 
     @OneToMany(mappedBy = "post")

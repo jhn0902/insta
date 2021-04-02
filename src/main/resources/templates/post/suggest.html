@@ -67,13 +67,12 @@
       let scrollTop = $(window).scrollTop();
       let documentHeight = $(document).height();
       let windowHeight = $(window).height();
-
       let checkNum = ($(document).height() - $(window).height()) == $(window).scrollTop();
       if (checkNum) {
         page++;
-        console.log(page);
         scroll();
       }
+
       let isBottom = documentHeight == scrollTop + windowHeight;
       if (isBottom) {
         $("#footer").attr("style", "display:block;");
@@ -89,7 +88,6 @@
     async function scroll(){
         let response = await fetch(`/post/suggest/scroll?page=${page}`);
         let posts = await response.json();
-        console.log(posts);
         posts.forEach(function(post){
           let tag = appendPostList(post);
           $(".post").append(tag);
@@ -103,7 +101,7 @@
       tag += `<span id="pfont">${post.likeCount}개</span>`;
       tag += `<span class="glyphicon glyphicon-pencil"></span>`;
       tag += `<span id="pfont">${post.reviewCount}개</span></div>`;
-      tag += `</div><img class="img-responsive" src="/image/{post.imagePath}" /></a></div>`;
+      tag += `</div><img class="img-responsive" src="/image/${post.imagePath}" /></a></div>`;
       return tag;
     }
   </script>

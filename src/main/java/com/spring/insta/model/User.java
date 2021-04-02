@@ -1,6 +1,7 @@
 package com.spring.insta.model;
 
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -48,12 +49,14 @@ public class User extends BaseEntity {
     private String profileImage;
 
     @OneToMany(mappedBy = "user")
+    @JsonManagedReference
     private List<Post> posts = new ArrayList<>();
 
     @OneToMany(mappedBy = "user")
     private List<Bookmark> bookmarks = new ArrayList<>();
 
     @OneToMany(mappedBy = "user")
+    @JsonManagedReference
     private List<Review> reviews = new ArrayList<>();
 
     public User(String email, String password, String name) {

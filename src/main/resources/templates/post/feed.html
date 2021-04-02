@@ -82,7 +82,7 @@
 				<ul class="photo__comments" th:id="'photo__comments_' + ${post.id}">
 					<div class="test" th:each="review : ${post.reviews}">
 						<li class="photo__comment" th:id="'photo__comment_' + ${post.id}">
-							<span class="photo__comment-author" th:text="${review.user.nickname}">reivew user nickname</span>
+							<span class="photo__comment-author" th:text="${review.userNickname}">reivew user nickname</span>
 							<span th:text="${review.content}">review content</span>
 						</li>
 						<li class="photo__comment" th:if="${review.id == null}">
@@ -112,13 +112,10 @@
 	<script>
 		function textCheck(postId) {
 			let text = $('#review_content_'+postId).val();
-			console.log(text);
 			if (text === '') {
-				console.log('empty');
 				$("#review_btn_"+postId).attr('disabled', 'disabled');
 				$("#review_btn_"+postId).attr('style', 'cursor:disabled; color:#dceefe;');
 			} else {
-				console.log('no empty');
 				$("#review_btn_"+postId).removeAttr('disabled');
 				$("#review_btn_"+postId).attr('style', 'color:#71baf8; cursor:pointer;');
 			}
@@ -129,7 +126,6 @@
 
 		function prepare(postId) {
 			let content = $("#review_content_"+postId).val();
-			console.log(content);
 			if (content !== ''){
 				$.ajax({
 					type: "POST",
@@ -170,8 +166,6 @@
 				},
 				success: function(msg) {
 					let likeCount = Number($("#photo_likes_count_"+postId).text());
-					console.log('likeCount = ' + likeCount);
-					console.log(msg);
 					if(msg === "like"){
 						likeCount += 1;
 						$("#photo_likes_count_"+postId).text(likeCount);
@@ -240,7 +234,7 @@
 		box += `<span class="photo__username">${post.username}</span>`;
 		box += `<span class="photo__location">${post.location}</span></div></header>`;
 		box += `<div class="photo_post_image">`;
-		box += `<img src="/upload${post.imagePath}" /></div>`;
+		box += `<img src="/image/{post.imagePath}" /></div>`;
 		box += `<div class="photo__info"><div class="photo__actions"><span class="photo__action">`;
 
 		if(post.heart === true){
@@ -270,7 +264,7 @@
 
 		post.reviews.forEach(function(review) {
 			box += `<li class="photo__comment">`;
-			box += `<span class="photo__comment-author">${review.user.nickname}</span>`;
+			box += `<span class="photo__comment-author">${review.userNickname}</span>`;
 			box += `<span>${review.content}</span></li>`
 		});
 

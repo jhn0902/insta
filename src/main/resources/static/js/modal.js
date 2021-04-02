@@ -24,7 +24,7 @@ async function load_like_notification(){
 function make_like_box(likes){
 	console.log("make_like_box");
 	let like_box = `<div class="like_popup_item"> `;
-	like_box += `<img src="/upload/${likes.user.profileImage}" onerror="this.onerror=null; this.src='/images/avatar.jpg'" />`;
+	like_box += `<img src="/image/${likes.user.profileImage}" onerror="this.onerror=null; this.src='/images/avatar.jpg'" />`;
 	like_box += `<p><a href="/user/${likes.user.id}">`;
 	like_box += `${likes.user.username}님이 ${likes.image.caption} 사진을 좋아합니다.`;
 	like_box += `</a></p></div>`;

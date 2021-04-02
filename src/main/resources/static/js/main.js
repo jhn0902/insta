@@ -26,12 +26,12 @@ $(window).scroll(function() {
 function appendMainPostList(post) {
     box = `<div class="photo u-default-box">`;
     box += `<header class="photo__header">`;
-    box += `<img src="/upload/${post.profileImage}" onerror="this.onerror=null; this.src='/images/profile_default.jpg'"/>`;
+    box += `<img src="/image/${post.profileImage}" onerror="this.onerror=null; this.src='/images/profile_default.jpg'"/>`;
     box += `<div class="photo_user_info">`;
     box += `<span class="photo__username">${post.username}</span>`;
     box += `<span class="photo__location">${post.location}</span></div></header>`;
     box += `<div class="photo_post_image">`;
-    box += `<img src="/upload${post.imagePath}" /></div>`;
+    box += `<img src="/image/${post.imagePath}" /></div>`;
     box += `<div class="photo__info"><div class="photo__actions"><span class="photo__action">`;
 
     if(post.heart === true){

@@ -1,8 +1,6 @@
 package com.spring.insta.dto;
 
-import com.spring.insta.model.Post;
 import com.spring.insta.model.Review;
-import com.spring.insta.model.User;
 import lombok.Data;
 
 @Data

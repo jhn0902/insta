@@ -26,9 +26,8 @@ public class PostResponseDto {
     private String username;
     private String profileImage;
 
-//    private List<Tag> tags;
     private List<String> tags;
-    private List<Review> reviews;
+    private List<ReviewResponseDto> reviews;
     private int reviewCount;
 
     private boolean checkBookmark;
@@ -56,7 +55,7 @@ public class PostResponseDto {
 
         /* 최근 작성일 기준으로 정렬 */
         Collections.sort(post.getReviews(), comparator);
-        this.reviews = post.getReviews();
+        this.reviews = ReviewResponseDto.of(post.getReviews());
         this.reviewCount = post.getReviews().size();
         List<String> tagNames = new ArrayList<>();
         for (Tag tag : post.getTags()) {

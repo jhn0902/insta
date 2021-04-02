@@ -73,7 +73,7 @@ public class UserController {
         User updateUser = UserResponseDto.toEntity(userResponseDto);
         userService.updateUser(updateUser);
 
-        return "redirect:user/profile";
+        return "redirect:/user/profile";
     }
 
     @GetMapping("/check/email")
@@ -97,7 +97,7 @@ public class UserController {
     public String updatePw(@AuthenticationPrincipal UserContext userContext,
                            @RequestParam("newPassword") String pw) {
         userService.updatePw(userContext.getUser().getId(), pw);
-        return "redirect:user/profile";
+        return "redirect:/user/profile";
     }
 
     @GetMapping("/findForm")

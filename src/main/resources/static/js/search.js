@@ -54,7 +54,7 @@ function append(list, searchCondition) {
         if (list.profileImage === null) {
             box += `<img class="search_img" src="/images/profile_default.jpg"/>`
         } else {
-            box += `<img class="search_img" src="/upload${list.profileImage}"/>`
+            box += `<img class="search_img" src="/image/${list.profileImage}"/>`
         }
         box += `</div><div class="search_info">`
         box += `<div class="info1">${list.nickname}</div>`
